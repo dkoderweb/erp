@@ -79,3 +79,6 @@ table.dataTable tbody tr {
   background-color: transparent;
   vertical-align: baseline;
 }
+a{
+  text-decoration: none; 
+}
