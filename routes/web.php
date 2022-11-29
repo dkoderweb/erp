@@ -20,5 +20,8 @@ use App\Http\Controllers\ProductController;
 // });
 Route::post("/product-add", [ProductController::class,"store_product"]);
 Route::post("/product-update", [ProductController::class,"update_product"]);
+Route::post("/img", [ProductController::class,"img"])->name("img");
+Route::post("/fetchimg", [ProductController::class,"fetchImg"])->name("fetchimg");
 Route::get("/", [ProductController::class,"index"]);
 Route::get("/product-remove/{id}{product_number}", [ProductController::class,"product_delete"]);
+Route::get("/delere", [ProductController::class,"delete_permanently"]);

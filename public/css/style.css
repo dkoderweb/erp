@@ -19,14 +19,14 @@
     display: none;
   }
   
-  .wrapper-thumb {
+  .wrapper-thumb , #img-preview  ,.img-preview{
     position: relative;
     display:inline-block;
     margin: 1rem 0;
     justify-content: space-around;
   }
   
-  .img-preview-thumb , .img-preview {
+  .img-preview-thumb   {
     background: #fff;
     border: 1px solid none;
     border-radius: 0.25rem;
@@ -36,7 +36,7 @@
     padding: 0.25rem;
   }
   
-  .remove-btn{
+  .remove-btn  {
     position:absolute;
     display:flex;
     justify-content:center;
@@ -82,3 +82,4 @@ table.dataTable tbody tr {
 a{
   text-decoration: none; 
 }
+ 

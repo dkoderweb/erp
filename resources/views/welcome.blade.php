@@ -7,6 +7,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
     <link rel="stylesheet" href="{{asset('/')}}css/style.css">  
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.1/css/jquery.dataTables.min.css"> 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">   
 
   </head>
   <body>
@@ -22,6 +23,15 @@
                   </button>
             </div>
         </div>
+        @if (count($errors) > 0)
+            <div class="alert alert-danger">
+            <ul>
+            @foreach ($errors->all() as $error)
+            <li>{{ $error }}</li>
+            @endforeach
+            </ul>
+            </div>
+            @endif
         {{-- Model --}}
         <div class="modal fade" id="productModal" tabindex="-1"  aria-hidden="true">
             <div class="modal-dialog">
@@ -37,7 +47,7 @@
                       <input type="hidden" name="product_id" id="product_id">
                         <div class="mb-3 col-lg-8">
                             <label for="product-name" class="form-label">Product Name</label>
-                            <input type="text" name="product_name" class="form-control" id="product-name" placeholder="Enter Product Name" required> 
+                            <input type="text" name="product_name" class="form-control" id="product-name" placeholder="Enter Product Name" >  
                           </div>
                           
                           <div class="mb-3 col-lg-4">
@@ -48,30 +58,30 @@
 
                           <div class="mb-3 col-lg-12">
                             <label for="product-category" class="form-label">Category</label> 
-                            <select class="form-select" id="product-category" name="product_category" required>
+                            <select class="form-select" id="product-category" name="product_category" >
                                 <option value="">Select Product category</option>
                                 <option>Mobile Devices</option>
                                 <option>Wearables</option>
                                 <option>TVs, Set Top Boxes, Monitors</option>
                                 <option>Laptops, Tablets, Computers</option>
                                 <option>Appliances & White Goods</option>
-                            </select>
+                            </select> 
                           </div>
                           <div class="mb-3 col-lg-6">
                             <label for="product-price" class="form-label"> Price</label>
-                            <input type="text" name="product_price" onkeypress="return (event.charCode !=8 && event.charCode ==0 || ( event.charCode == 46 || (event.charCode >= 48 && event.charCode <= 57)))" maxlength="6" class="form-control" id="product-price" placeholder="Enter Product Price" required> 
+                            <input type="text" name="product_price" maxlength="6" class="form-control" id="product-price" placeholder="Enter Product Price" >  
                           </div>
                           <div class="mb-3 col-lg-6">
                             <label for="product-quantity" class="form-label"> Quantity</label>
-                            <input type="text" name="product_quantity" onkeypress="return (event.charCode !=8 && event.charCode ==0 || ( event.charCode == 46 || (event.charCode >= 48 && event.charCode <= 57)))" maxlength="6" class="form-control" id="product-quantity" placeholder="Enter Product Quantity" required> 
+                            <input type="text" name="product_quantity" maxlength="6" class="form-control" id="product-quantity" placeholder="Enter Product Quantity" >  
                           </div>
                           <div class="mb-3 col-lg-12">  
                             <label for="product-description" class="form-label">Description</label>
-                            <textarea class="form-control" placeholder="Enter Product Description" name="product_description" id="product-description" required></textarea> 
+                            <textarea class="form-control" placeholder="Enter Product Description" name="product_description" id="product-description" ></textarea>  
                           </div>
                           <div class="mb-3 col-lg-12">  
                             <label for="product-img" class="form-label" >Images</label>
-                            <input type="file" class="form-control" name="product_img[]" id="product-img" required multiple > 
+                            <input type="file" class="form-control" name="product_img[]" id="product-img"  multiple >  
                             <div class="img-thumbs img-thumbs-hidden" id="img-preview"></div>
                           </div>
                     </div>  
@@ -111,8 +121,12 @@
                     <td>{{$d->product_quantity}}</td> 
                     <td>{{$d->product_description}}</td> 
                     <td>
-                        @foreach(json_decode($d->product_img) as $img)
-                        <img class="product-img" src="{{ asset('product_img/' .   $img   ) }}"   alt="Product Image">
+                        @foreach($Image as $img)
+                        @if($d->id ==  $img->product_id) 
+                            <div class="{{$img->id}} img-preview">
+                                <img class="product-img img-preview-thumb" src="{{ asset('' .   $img->product_img   ) }}"   alt="Product Image"><span class="remove-btn product-img">x</span>
+                            </div> 
+                        @endif
                         @endforeach
                     </td>   
                     <td>
@@ -139,6 +153,94 @@
     <script src="https://code.jquery.com/jquery-3.5.1.js"></script>  
     <script src="https://cdn.datatables.net/1.13.1/js/jquery.dataTables.min.js"></script>
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>  
-    <script src="/js/product.js"></script>
+    <script type="text/javascript" src="{{asset('/js/product.js')}}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    
+    <script> 
+      //--success-msg---
+        @if((session()->has('store_product')) || (session()->has('update_product')))
+            $(document).ready(function(){
+                toastr.success("{{session()->get('store_product')}} {{session()->get('update_product')}}.")
+            });
+        @endif 
+      //---error-msg---
+        @if(session()->has('product_delete'))
+              $(document).ready(function(){
+                  toastr.error( "{{ session()->get('product_delete') }}")
+              });
+        @endif 
+      
+      //---product-image-remove---
+      $("body").on("click", ".product-img", function(){   
+          var id =id = $(this).parent('div').attr('class');  
+          $(this).parent('div').remove()
+
+        $.ajax({
+            url: "{{ route('img') }}",
+            type:"POST",
+            data:{
+                id : id,
+                _token: '{{csrf_token()}}'
+            },
+            dataType:"json",
+            success:function(img){
+                toastr.success('Product Image Deleted Successfully.') 
+                 location.reload();
+            }
+        });
+         
+      })
+
+      //---edit-modal---
+      function edit_partner(el) {
+        $(".alert").hide()
+        $(".wrapper-thumb .img-preview-thumb , .wrapper-thumb .product-img , .wrapper-thumb .remove-btn").remove(); 
+        var link = $(el)
+        var id =id =link.data('id') 
+        $.ajax({
+            url: "{{ route('fetchimg') }}",
+            type:"POST",
+            data:{
+                id : id,
+                _token: '{{csrf_token()}}'
+            },
+            dataType:"json",
+            success:function(img){
+                $.each(img.images, function (key, value) { 
+                    console.log(value.product_img);
+                    $("#img-preview").append( 
+                      //--image--append--- 
+                        ` <div class="${value.id} wrapper-thumb"><img src="${value.product_img}" class="img-preview-thumb"><span class="remove-btn product-img">x</span>`);
+                })
+            }
+        }); 
+        $('#productModal').modal('show');
+        $("#productLable").html('Update Product');
+        $("#productForm").attr('action', '/product-update');
+        $("#submit_btn").html("Update")
+        $("#img-preview").show()
+            //refer `a` tag which is clicked
+            var modal = $("#productModal").show() //your modal
+            var product_id = link.data('id')
+            var product_name = link.data('product_name') 
+            var product_number = link.data('product_number') 
+            var product_category = link.data('product_category') 
+            var product_price = link.data('product_price') 
+            var product_quantity = link.data('product_quantity') 
+            var product_description = link.data('product_description') 
+             
+
+            modal.find('#product_id').val(product_id); 
+            modal.find('#product-name').val(product_name);  
+            modal.find('#product-number').val(product_number);  
+            modal.find('.product-number').val(product_number);  
+            modal.find('#product-category').val(product_category);  
+            modal.find('#product-price').val(product_price);  
+            modal.find('#product-quantity').val(product_quantity);  
+            modal.find('#product-description').val(product_description);   
+    }
+     
+
+    </script>
   </body>
 </html>

@@ -4,12 +4,14 @@ $(document).ready(function () {
 
     //--new product---
     $('#createNewProduct').click(function () { 
+        $(".alert").hide()
+        $(".wrapper-thumb .img-preview-thumb , .wrapper-thumb .product-img , .wrapper-thumb .remove-btn").remove(); 
+        $(".form-control , .form-select").val('')   
       $('#productModal').modal('show'); 
         $("#productLable").html('Add Product');
         $("#productForm").attr('action', '/product-add');
         $("#submit_btn").html("Save")
         $(".form-control").val('')
-        $(".img-preview").remove();  
     });
     //---random-product-name--
     $("#product-name").on("change", function(){
@@ -20,6 +22,7 @@ $(document).ready(function () {
         $('.product-number').val(newValue + ram );
     })
     //--img-preview---
+    
     var imgUpload = document.getElementById('product-img'),
         imgPreview = document.getElementById('img-preview')
         , imgUploadForm = document.getElementById('form-upload')
@@ -27,17 +30,17 @@ $(document).ready(function () {
         , previewTitle
         , previewTitleText
         , img;
-
+        
         imgUpload.addEventListener('change', previewImgs, true);
 
         function previewImgs(event) {
-        totalFiles = imgUpload.files.length;
-        
+        totalFiles = imgUpload.files.length;  
             if(!!totalFiles) {
             imgPreview.classList.remove('img-thumbs-hidden');
+            
         }
         
-        for(var i = 0; i < totalFiles; i++) {
+        for(var i = 0; i < totalFiles; i++) { 
             wrapper = document.createElement('div');
             wrapper.classList.add('wrapper-thumb');
             removeBtn = document.createElement("span");
@@ -57,44 +60,7 @@ $(document).ready(function () {
         }  
     } 
 });
-    //---edit-modal---
-    function edit_partner(el) {
-        $('#productModal').modal('show');
-        $("#productLable").html('Update Product');
-        $("#productForm").attr('action', '/product-update');
-        $("#submit_btn").html("Update")
-        $("#img-preview").show()
-            var link = $(el) //refer `a` tag which is clicked
-            var modal = $("#productModal").show() //your modal
-            var product_id = link.data('id')
-            var product_name = link.data('product_name') 
-            var product_number = link.data('product_number') 
-            var product_category = link.data('product_category') 
-            var product_price = link.data('product_price') 
-            var product_quantity = link.data('product_quantity') 
-            var product_description = link.data('product_description') 
-            var product_img = link.data('product_img') 
-
-            modal.find('#product_id').val(product_id); 
-            modal.find('#product-name').val(product_name);  
-            modal.find('#product-number').val(product_number);  
-            modal.find('.product-number').val(product_number);  
-            modal.find('#product-category').val(product_category);  
-            modal.find('#product-price').val(product_price);  
-            modal.find('#product-quantity').val(product_quantity);  
-            modal.find('#product-description').val(product_description);  
-                                 
-            var db = JSON.stringify(product_img);
-            var jsonResults = JSON.parse(db); 
-
-            for(i = 0; i < jsonResults.length; i++) {
-                $('#img-preview').append('<img src="product_img/'+ jsonResults[i]+'" class="img-preview">'); 
-             }
-
-            $("#product-img").on("change", function(){
-                $(".img-preview").remove();
-            });
-    }
+  
 
     //---delete-product---
     $('.deleteProduct').on('click', function (event) {
@@ -111,5 +77,8 @@ $(document).ready(function () {
                 }
         });
     });
+    
+ 
+ 
    
   

@@ -4,10 +4,14 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Models\Image;
+use Illuminate\Database\Eloquent\softDeletes;
 class Product extends Model
 {
     use HasFactory;
-    use SoftDeletes;
-    protected $dates = ['deleted_at'];
+    use softDeletes;
+    protected $dates = ["deleted_at"];
+    public function image(){
+        return $this->hasMany(Image::class);
+    }
 }
