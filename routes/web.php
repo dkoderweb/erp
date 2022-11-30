@@ -24,4 +24,4 @@ Route::post("/img", [ProductController::class,"img"])->name("img");
 Route::post("/fetchimg", [ProductController::class,"fetchImg"])->name("fetchimg");
 Route::get("/", [ProductController::class,"index"]);
 Route::get("/product-remove/{id}{product_number}", [ProductController::class,"product_delete"]);
-Route::get("/delere", [ProductController::class,"delete_permanently"]);
+Route::get("/delete", [ProductController::class,"delete_permanently"]);
